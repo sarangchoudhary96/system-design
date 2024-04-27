@@ -6,7 +6,13 @@
   + [Forward proxy](#forward-proxy)
   + [Reverse proxy](#reverse-proxy)
 - [Caching](#caching)
-  + 
+- [Distributed Caching](#distributed-caching)
+- [Caching Strategies](#caching-strategies)
+  + [Cache Aside](#1-cache-aside)
+  + [Read through cache](#2-read-through-cache)
+  + [Write around cache](#3-write-around-cache)
+  + [Write through cache](#4-write-through-cache)
+  + [Write back or behind cache](#5-write-back-or-behind-cache)
 
 
 ### Distributed message queue
@@ -151,7 +157,7 @@ https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699
 
 ### Caching Strategies
 
-#### 1) Cache Aside
+### 1) Cache Aside
 * Application First check the cache
 * If data found in cache, its called cache hit and data is returned to the client.
 * If data is not found in cache, its called cache miss. Application fetch the data from DB, store it back to cache and data is returend to the client.
