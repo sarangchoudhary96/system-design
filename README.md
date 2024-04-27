@@ -61,6 +61,11 @@
   - Topic : Topic Name (Mandatory)
 * If we pass the key which is id then kafka create hash out if it and according to has it puts data in the partiton and if we don't pass the Key then it looks for partition and push data to the given partition and if partition is also not given then it uses round-robin algo to push data in partitions.
 
+#### Message retention
+* Kafka supports different message retention policies such as time based rentention and size based retention.
+* Messages can be retained for a specific duration or until log segment reaches a certain size.
+* This allows kafka to store messages for a configurable period, enabling consumers to replay messages if needed.
+
 #### Use of offset ?
 * Continuing with above example, Let say we have a consumer group A which only one consumer initially and it is reading from topic A - partition0.
 * Zookeeper maintains this info - like consumer group A has consumer 1 reading from TOPIC A - partition 1 and it also has a committed offset.
@@ -84,6 +89,63 @@
 
 #### What happens when consumer not able to process it
 * Let say we have a partition p0 and a consumer c1 and c1 has consumed upto index 6 and when it is processing 7th index data then it goes failed. so for it we can add retry mechanism and retry can be 2, 3, 4 .. n no of times and now of retry has reached then a consumer c1 and push that message into another queue know as dead letter queue. and with the help of another process which will consume the message from dead letter queue and will fix the message and push back to the partition p0.
+
+#### In kafka can a consumer in a consumer group can connect to more than one partition of same topic ?
+* Yes, in Apache Kafka, a consumer within a consumer group can indeed be assigned to multiple partitions of the same topic. The assignment of partitions to consumers is handled by Kafka's group coordinator, which ensures that each partition of a topic is consumed by only one consumer in the group at any time. However, a single consumer can definitely consume messages from more than one partition.
+* How Partition Assignment Works:
+  - Partition Distribution: Kafka distributes the partitions of a topic across different consumers in a consumer group such that each partition is assigned to only one consumer of the group at a time. If there are more partitions than consumers, some consumers will end up consuming from multiple partitions.
+  - Consumer Scalability: If there are fewer consumers than partitions, some consumers will consume from multiple partitions. Conversely, if there are more consumers than partitions, some consumers will remain idle without any partitions to consume from.
+  - Balancing: Kafka periodically rebalances partitions across consumers in a consumer group. This rebalancing can occur when new consumers join the group, existing consumers leave, or when the topics/partitions themselves change.
+  - Consumer Load: Assigning multiple partitions to a single consumer can increase the load on that consumer, potentially leading to performance bottlenecks if not properly managed.
+  - Fault Tolerance: Having multiple partitions on a single consumer can also affect fault tolerance; if that consumer fails, a larger volume of data (multiple partitions) must be redistributed to other consumers.
+
+#### who creates consumer group ?
+* In Apache Kafka, consumer groups are created implicitly by the consumers themselves. When a consumer connects to a Kafka broker, it specifies the consumer group it belongs to as part of its configuration. If the specified consumer group does not already exist, it is automatically created by the Kafka broker.
+* Here's how the process typically works:
+  - Consumer Configuration: When writing a Kafka consumer application, you configure each consumer with various settings. One of these settings is the group.id, which specifies the consumer group to which the consumer belongs.
+  - Starting the Consumer: When you start the consumer application, it connects to the Kafka cluster and registers itself with the specified group.id. If this consumer group does not yet exist in the Kafka cluster, Kafka creates it at this point.
+  - Group Management: Kafka brokers manage the consumer groups. This includes keeping track of which consumers are part of which groups, which partitions each consumer is currently reading, and handling rebalances in case consumers are added or removed from the group.
+  - Multiple Consumers: If additional consumers connect to the same Kafka cluster specifying the same group.id, they are automatically added to the existing consumer group. Kafka then may rebalance the partitions among all consumers in the group to ensure an efficient and fair distribution of work.
+  - Persistence: The information about consumer groups, such as their offsets (i.e., their position within each partition of a topic), is stored in a special Kafka internal topic named __consumer_offsets. This allows Kafka to maintain state across consumer restarts and rebalances.
+
+#### does every consumer within a consumer group has its own offset ?
+* Yes, every consumer within a consumer group in Apache Kafka maintains its own offset for each partition it is consuming from.
+* Here is how it works:
+  - Partition Assignment: In Kafka, each consumer group is assigned a set of partitions from the topics it subscribes to. This assignment is exclusive; that is, each partition is consumed by exactly one consumer in the group at any given time.
+  - Offset Tracking: Each consumer within the group tracks its own offset for each partition it is consuming. The offset represents the position of the consumer in the partition, indicating which messages have been consumed. It is crucial for ensuring that each message is processed once and only once by the group, even if consumers crash or new consumers join the group.
+  - Offset Storage: Offsets are typically stored in Kafka's internal topic named __consumer_offsets. When a consumer processes a message from a partition, it can commit the offset of that message to Kafka. This commit tells Kafka that all previous messages up to that offset have been processed by that consumer. When the consumer restarts, it begins consuming from the last committed offset, ensuring no message is missed or redundantly processed.
+  - Independent Offsets: Since each consumer manages its own offset for the partitions it reads, consumers in the same group do not affect each other's position in their respective partitions. This independent management allows for flexible scaling of consumers within a group and robust fault tolerance.
+  - Rebalancing: If a consumer leaves the group or new consumers join the group, Kafka may reassign partitions among the remaining or new consumers. During this rebalancing, offsets play a crucial role in ensuring continuous and accurate processing. Consumers will start consuming their new partitions from the offset stored in __consumer_offsets.
+ 
+#### If any consumer is consuming messages and if I change the consumer group name for that consumer in a configuration then from where it will start process the data from same topic?
+* When you change the consumer group name for a Kafka consumer, effectively creating a new consumer or moving it to a different group, the behavior in terms of where it starts consuming messages depends on several configuration settings:
+  - Offset Reset Configuration: Kafka consumers have a configuration setting called auto.offset.reset that determines what to do when there is no initial offset in Kafka or if the current offset does not exist any more (e.g., because it has been deleted):
+    + earliest: The consumer starts reading at the earliest offset (the oldest available message in the log).
+    + latest: The consumer starts reading just past the latest offset (it will only consume messages that are produced after it has started).
+    + none: If no previous offset is found for the consumer's group, it throws an exception to the consumer.
+  - New Consumer Group: When you assign a new group name to a consumer, Kafka treats this as a completely new consumer group. Since this new group has no committed offsets, it will rely on the auto.offset.reset policy:
+    + If auto.offset.reset is set to earliest, the consumer will start from the oldest message available in each partition of the topic.
+    + If set to latest, the consumer will start consuming new messages from the point it starts up, ignoring any messages sent before.
+  - Practical Impact: This setting is critical when setting up new consumers or changing consumer group names because it controls the visibility of historical data to the consumer. Choosing between earliest and latest depends on whether you need to process previously unprocessed messages or just new messages moving forward.
+  - Example: Suppose a consumer is part of a group consuming messages from a topic. If you change the group name and set auto.offset.reset to earliest, the new group’s consumers will start processing from the oldest message available in the topic. If set to latest, they will only see messages published after they start.
+ 
+#### If there is a consumer group with one consumer and it has its own offset and if any new consumer comes in a consumer group then from where this consumer will start reading messages?
+* When a new consumer joins an existing consumer group in Kafka, the handling of where this new consumer starts reading messages depends on a few factors, primarily focusing on whether there are existing committed offsets for this consumer and how partitions are reassigned among consumers in the group:
+  - Partition Assignment: Kafka uses a group coordination protocol to assign partitions to consumers within a group. When a new consumer joins an existing group, a re-balance occurs. This re-balance process redistributes the partitions among all consumers in the group to evenly distribute the workload.
+  - Starting Point After Rebalance:
+    + Existing Offsets: If the partitions assigned to the new consumer have committed offsets (from previous consumers who handled these partitions before the re-balance), the new consumer will start consuming from the next message after the last committed offset. This ensures that no messages are missed or doubly processed, maintaining consistency.
+    + No Existing Offsets: If the partitions assigned to the new consumer do not have committed offsets (which can occur if these partitions were not previously assigned to any consumer), the new consumer's starting point will depend on the auto.offset.reset configuration:
+      - earliest: Starts from the earliest available message in the partition.
+      - latest: Starts consuming messages that arrive after the consumer starts.
+      - none: Throws an exception if no offset is saved.
+  - Effect of Adding a New Consumer:
+    + When the new consumer joins, and the group is rebalanced, each consumer may end up with a different set of partitions than they had before. This means the new consumer might take over some partitions previously handled by others, starting from where the last consumer left off (based on committed offsets).
+    + The existing consumers will adjust to handle their new set of partitions, continuing from the committed offsets of any new partitions they receive.
+  - Considerations: It's important to manage consumer group changes carefully because re-balances, while necessary for scaling and fault tolerance, can cause temporary disruptions. During a re-balance, consumers cannot consume messages, which may lead to a slight delay in message processing.
+
+
+  
+
 
 
 #### Kafka vs RMQ
