@@ -80,6 +80,7 @@
 
 
 #### RabbitMQ
+https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699d6f08
 
 
 
