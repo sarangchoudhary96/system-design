@@ -1,7 +1,8 @@
 # Table of Contents
 - [Distributed message queue (like : KAFKA, RMQ)](#distributed-message-queue)
-- [KAFKA](#kafka)
-- [RabbitMQ](#rabbitmq)
+  + [KAFKA](#kafka)
+  + [RabbitMQ](#rabbitmq)
+- [Proxy](#proxy)
 
 
 ### Distributed message queue
@@ -82,6 +83,48 @@
 #### RabbitMQ
 https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699d6f08
 
+
+## Proxy
+### What is Proxy server ? 
+* Let us understand it with an example, let say their is a child and there is a chocolate shop and child wants a chocolate so child will ask his mon for the chocolate and his mom on behalf of him will go to chocolate shop will get it and given will chocolate to the child so mon here is proxy.
+* So in real case let say we have client1 and client2 and a server so we can place a proxy server in between clients and a server that will connect to a server on behalf of clients.
+
+### Types of Proxy
+#### Forward proxy
+* In general when we talk about proxy it is called forward proxy like in above examples.
+
+##### Advantages
+* It hides the client from outside world, How ? let say we have two clients c1 and c2 and they have their own IPs so when they hit a server through forward proxy then server will have a IP of proxy server but here client is the one who is making a call. Basically it provides anonymous.
+* Grouping of requests : let say client c1 and c2 making a request google.com at same time so proxy server will club all similar requests and will hit the server with one request only.
+* Access restricted data/content.
+* It brings security : we can certain kind of security like you cannot access data from facebook.com or anything like that.
+* Caching : Let say there are 100 clients they ask some static content so proxy will get the data from server and will push it into its cache and next time when req comes for same static content this will return the data from cache.
+
+##### Disadvantages
+* lets say there n number of applications then we have to set n number of proxy server.
+  
+#### Reverse proxy
+* It is just a reverse in direction of forward proxy.
+* Let say there are 3 servers and a request comes from the internet then request cannot go directly to any server there is a reverse proxy server placed in front of these servers which will hit the server.
+
+##### Advantage
+* Security : Outside world cannot hit server directly their IPs are hide for outside world as there is only reverse proxy server placed. for example CDN, CDN is a reverse proxy.
+* Caching : For example CDN has its own cache.
+* Latency : CDN is placed at near user location so reduces latency.
+* Load Balancer capability : reverse proxy can be used for load balancing to servers.
+
+### Proxy vs VPN
+* Proxy cannot do encryption and decrption of data where as VPN can do encryption and decryption. Let say there is a VPN client and somewhere a VPN server and there is VPN tunnel between then through which data flows so data go from VPN client to VPN server in encrypted form and VPN server decrypt and call the main server.
+
+### Proxy(reverse proxy) vs Load Balancer
+* Reverse proxy can act as LB , but LB cannot act as a proxy.
+* Proxy can do much more like caching, IP anonymity, logging, but LB does not have these kind of capabilitities.
+* If we have only one server then we don't need LB, but reverse proxy might be required due its other capabilities.
+
+### Proxy vs Firewall
+* What Firewall is ? In firewall, we put certain holes and each hole defines a rule that what data can pass to the outside internet. So it works on packet scanning, in which it checks header which contains port no, IP address, source and destination. so based on these attributes it check wheather it should allow it to pass or not.
+* But in case of proxy we have data and we can setup rules on the basis of data also.
+* Proxy can act as a firewall also, but the way they work is know as traditional firewall is known as packet
 
 
 
