@@ -3,6 +3,10 @@
   + [KAFKA](#kafka)
   + [RabbitMQ](#rabbitmq)
 - [Proxy](#proxy)
+  + [Forward proxy](#forward-proxy)
+  + [Reverse proxy](#reverse-proxy)
+- [Caching](#caching)
+  + 
 
 
 ### Distributed message queue
@@ -125,6 +129,100 @@ https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699
 * What Firewall is ? In firewall, we put certain holes and each hole defines a rule that what data can pass to the outside internet. So it works on packet scanning, in which it checks header which contains port no, IP address, source and destination. so based on these attributes it check wheather it should allow it to pass or not.
 * But in case of proxy we have data and we can setup rules on the basis of data also.
 * Proxy can act as a firewall also, but the way they work is know as traditional firewall is known as packet
+
+
+## Caching
+
+* Caching is a technique to store frequently used data in a fast memory rather than accessing data every time from slow access memory.
+* This makes our system very fast.
+* It helps to reduce the latency.
+* It also helps to achieve the fault tolerance.
+* There are different types of caching present at different layer of system like:
+  - client side caching (Browser caching)
+  - CDN (used to store the static data)
+  - Load Balancer
+  - Server side Application caching (like Redis etc.)
+  - etc.
+* At server side cache site between app server and DB.
+
+### Distributed Caching
+* Before understanding this, let say we have three app servers app1, app2 and app3 and there is a single cache server in which all app servers are calling. so this will create a problem of scalability at any particular point of time we can't scale it more due to limited resources and single point of failure, if this cache server gone then caching capability gone. so thats where distributed caching comes in to the picture.
+* So here we a have cache pool and in cache pool we have N number of cache servers. cache server 1, cache server 2 , cache server 3 and so on. and also we have a cache client. so each app server uses this cache client to connect to a particular cache server and each cache server has its own cache client. How cache server is alloted to a particular app server ? So for this it uses consistent hashing technique.
+
+### Caching Strategies
+
+#### 1) Cache Aside
+* Application First check the cache
+* If data found in cache, its called cache hit and data is returned to the client.
+* If data is not found in cache, its called cache miss. Application fetch the data from DB, store it back to cache and data is returend to the client.
+
+##### Advantages
+* Good approach read heavy applications.
+* Even cache is down, request will not fail, as it will fetch the data from the DB.
+* Cache Document data structure can be different than the data present in DB.
+
+##### Disadvantages
+* For new data read, there will always be CACHE-MISS first. (to resolve this, generally we can pre-heat the cache).
+* Without appropriate caching is not used during write operation. There is a chance of inconsistency between cache and DB.
+
+### 2) Read through cache
+* Application first check the cache.
+* If data found in cache, it's called cache hit and data is returned to the client.
+* If data is not found in the cache, its called cache miss. Cache library itself fetch data from the DB, store it back to cache and data is returned to the application.
+
+##### Advantages
+* Good approach for heavy read application.
+* Logic of fetching the data from DB and updating is seperated from the application.
+
+##### Disadvantages
+* For new data read, there will always be CACHE-MISS first. (to resolve this, generally we can pre-heat the cache).
+* Without appropriate caching is not used during write operation. There is a chance of inconsistency between cache DB.
+* Cache document structure should be same as DB table.
+
+### 3) Write around cache
+* Directly writes data into the DB.
+* It do not update the cache.
+* Let say PUT request comes and it directly writes into the DB let say earlier the value is 10 now it is changed to 11. then it will make the cache dirty, make dirty flag to true. so when get request comes it will see dirty flag is true so it miss the cache and will the DB and will update the cache with updated data.
+
+##### Advantages
+* Good approach for heavy read application.
+* Resolved inconsistency problem between cache and DB.
+
+##### Disadvantages
+* For new data read, there will always be CACHE-MISS first.(to resolve this, generally we can pre-heat the cache).
+* If DB is down, write operation will fail.
+
+### 4) Write through cache
+* First writes data into the cache.
+* Then in synchronous writes data into DB.
+
+##### Advantages
+* Cache and DB always remain consistent.
+* Cache hit chance increase a lot.
+
+##### Disadvantages
+* Alone its not useful it will increase the latency.(that's why its always used with read through or cache aside cache).
+* 2 phase commit, need to be supported with this. To maintain the transactional property.
+* If DB is down, write operation will fail.
+
+### 5) Write back or behind cache
+* First writes data into the cache.
+* Then in asynchronous writes data into the DB.
+
+##### Advantages
+* Good for write heavy application.
+* Improves the write operation latency. As writing into the DB happens asynchronously.
+* Cache hit chance increase a lot.
+* Gives much more performance when used with read through cache.
+* Even when DB fails, write operation willl still works.
+
+##### Disadvantages
+* If data is removed from the cache and DB write still not happen happens, then there is a chance of an issue. (it is handled by keeping the TAT of cache little higher like 2 days).
+
+
+
+
+
 
 
 
