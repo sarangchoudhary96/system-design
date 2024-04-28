@@ -1,4 +1,4 @@
-# Table of Contents
+Table of Contents
 - [Distributed message queue (like : KAFKA, RMQ)](#distributed-message-queue)
   + [KAFKA](#kafka)
   + [RabbitMQ](#rabbitmq)
@@ -13,6 +13,7 @@
   + [Write around cache](#3-write-around-cache)
   + [Write through cache](#4-write-through-cache)
   + [Write back or behind cache](#5-write-back-or-behind-cache)
+- [JSON web token](#json-web-token)
 
 
 ### Distributed message queue
@@ -146,28 +147,28 @@
 #### what should be the ratio of partition per consumer ?
 * In Kafka, the ideal ratio of partitions per consumer in a consumer group depends on several factors, including the throughput requirements of your application, the processing capabilities of each consumer, and the overall architecture of your Kafka deployment.
 * Here are some general guidelines and considerations for determining the appropriate ratio:
-  - Parallelism Needs:
-    + More Partitions than Consumers: Having more partitions than consumers allows your application to scale by adding more consumers up to the number of partitions. This can improve parallel processing as each consumer can process data from multiple partitions if needed.
-    + Equal or Fewer Partitions than Consumers: If there are fewer partitions than consumers, some consumers will remain idle. This scenario is generally not desirable as it wastes resources.
-  - Throughput and Performance:
-    + High Throughput: If your application requires high throughput, having more partitions can help because it allows distributing the load more effectively across more consumers.
-    + Consumer Capacity: Each consumer has a limit to how much data it can process efficiently. If a consumer is assigned too many partitions, it may not keep up with the flow of data, leading to increased latency or backlog in processing.
-  - Fault Tolerance and Availability: Multiple partitions also contribute to better fault tolerance. If one consumer fails, only the partitions assigned to that consumer are affected. Other consumers can continue processing the remaining partitions.
-  - Operational Simplicity: While having a large number of partitions increases parallelism and fault tolerance, it also comes with overhead in terms of management and possibly increased latency due to more frequent consumer rebalances.
+  - ```Parallelism Needs```:
+    + ```More Partitions than Consumers```: Having more partitions than consumers allows your application to scale by adding more consumers up to the number of partitions. This can improve parallel processing as each consumer can process data from multiple partitions if needed.
+    + ```Equal or Fewer Partitions than Consumers```: If there are fewer partitions than consumers, some consumers will remain idle. This scenario is generally not desirable as it wastes resources.
+  - ```Throughput and Performance```:
+    + ```High Throughput```: If your application requires high throughput, having more partitions can help because it allows distributing the load more effectively across more consumers.
+    + ```Consumer Capacity```: Each consumer has a limit to how much data it can process efficiently. If a consumer is assigned too many partitions, it may not keep up with the flow of data, leading to increased latency or backlog in processing.
+  - ```Fault Tolerance and Availability```: Multiple partitions also contribute to better fault tolerance. If one consumer fails, only the partitions assigned to that consumer are affected. Other consumers can continue processing the remaining partitions.
+  - ```Operational Simplicity```: While having a large number of partitions increases parallelism and fault tolerance, it also comes with overhead in terms of management and possibly increased latency due to more frequent consumer rebalances.
  
 #### if there is an application running with more than one instances then will consumers in a consumer group will be considered equal to number of instances ?
 * In the context of Kafka and application architecture, whether consumers in a consumer group are considered equal to the number of instances of an application depends on how the application is designed and how it integrates with Kafka.
 * Here are a few common scenarios and considerations:
-  - One Consumer Per Application Instance : In many scenarios, especially when using Kafka in microservices architectures, each instance of an application runs its own Kafka consumer. This setup is typical because it aligns the lifecycle of the consumer with the lifecycle of the application instance, making scaling straightforward:
-    + Scaling Up/Down: When you scale the application by adding more instances, you inherently increase the number of consumers in the consumer group. This helps in distributing the load more evenly across more consumers.
-    + Fault Tolerance: If an instance of the application fails, only the consumer in that instance is affected. Other instances (and their consumers) continue processing messages, which enhances the resilience of the system.
-  -  Multiple Consumers Per Application Instance : Some applications may run multiple consumers in a single instance, either in different threads or as part of a more complex consumer setup:
-    + Use Case Specific: This is less common but can be useful in cases where different threads or components of the application need to handle different types of messages or to consume from different topics.
-    + Resource Utilization: This approach can maximize the utilization of the application instance’s resources but requires careful management of threading and resource allocation.
-  - Single Consumer for Multiple Instances : It’s less common, but in some architectures, you might have a single consumer shared across multiple application instances. This setup is complex and generally used when the application instances are stateless, and the consumer’s processing logic is entirely separate from the main application logic.
-  - Best Practices
-    + One Consumer Per Instance: Generally, running one consumer per application instance is recommended for simplicity, scalability, and fault tolerance.
-    + Monitoring and Management: Use tools and metrics (like Kafka's built-in metrics or external monitoring tools) to observe consumer behavior, performance, and the rebalancing of consumers and partitions.
+  - ```One Consumer Per Application Instance``` : In many scenarios, especially when using Kafka in microservices architectures, each instance of an application runs its own Kafka consumer. This setup is typical because it aligns the lifecycle of the consumer with the lifecycle of the application instance, making scaling straightforward:
+    + ```Scaling Up/Down```: When you scale the application by adding more instances, you inherently increase the number of consumers in the consumer group. This helps in distributing the load more evenly across more consumers.
+    + ```Fault Tolerance```: If an instance of the application fails, only the consumer in that instance is affected. Other instances (and their consumers) continue processing messages, which enhances the resilience of the system.
+  -  ```Multiple Consumers Per Application Instance``` : Some applications may run multiple consumers in a single instance, either in different threads or as part of a more complex consumer setup:
+    + ```Use Case Specific```: This is less common but can be useful in cases where different threads or components of the application need to handle different types of messages or to consume from different topics.
+    + ```Resource Utilization```: This approach can maximize the utilization of the application instance’s resources but requires careful management of threading and resource allocation.
+  - ```Single Consumer for Multiple Instances```: It’s less common, but in some architectures, you might have a single consumer shared across multiple application instances. This setup is complex and generally used when the application instances are stateless, and the consumer’s processing logic is entirely separate from the main application logic.
+  - ```Best Practices```
+    + ```One Consumer Per Instance```: Generally, running one consumer per application instance is recommended for simplicity, scalability, and fault tolerance.
+    + ```Monitoring and Management```: Use tools and metrics (like Kafka's built-in metrics or external monitoring tools) to observe consumer behavior, performance, and the rebalancing of consumers and partitions.
 
 
   
@@ -313,6 +314,85 @@ https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699
 ##### Disadvantages
 * If data is removed from the cache and DB write still not happen happens, then there is a chance of an issue. (it is handled by keeping the TAT of cache little higher like 2 days).
 
+
+### JSON web token
+* It provides a secure way of transmitting information between parties as a JSON object.
+* This information can verified its digitally signed using RSA(Public/Private key pair) etc.
+
+#### Advantages
+* ```Compact``` : Because of its size, it can be send inside an HTTP header itself. And, due to its size its transmission is fast.
+* ```Self contained / stateless``` : The payload contain all the required information about the user, thus it avoid querying the database.
+* Can be signed using symmetric(HMAC) or Asymmetric(RSA).
+* Built in expiry mechanism.
+* Custom claim (additional data) can be added in the JWT.
+
+#### Where to use JWT ? 
+* Used for AUTHENTICATING (confirming the user identity).
+* Used for AUTHORIZATION (checks the user permission before providing access to resources).
+* Used for SSO (Single Sign On) i.e Authenticate once and access multiple applications.
+
+<img width="1274" alt="Screenshot 2024-04-28 at 10 49 53 AM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/4bd7008b-3f96-4885-b396-1b8fdeecfe97">
+
+### Before we understand more about JWT, lets first understand, what was popular before JWT and what are problems with it ?
+### ```Session ID```
+<img width="1150" alt="Screenshot 2024-04-28 at 10 58 17 AM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/382dc1a5-49b0-4f0e-b51a-07a393a4cb21">
+
+### ```Disadvantages```
+  - Stateful : It rely on server side state management, it cause problem in distributed systems.
+  - Its just a unique randon string, when server get this id, it has to perform DB query to fetch the details.
+
+
+### ```JWT Structure```
+<img width="1239" alt="Screenshot 2024-04-28 at 11 04 19 AM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/1ca24791-8142-4471-b0b3-3050e6d56ce0">
+
+#### ```Header```
+* Contains metadata information of the token.
+* typ : Type of the token, generally JWT always we add here.
+* alg : Signing algorithm used like RSA or HMAC etc.
+
+#### ```Payload```
+* Contains Claims (or in simole terms, user information or any additional information is kept here).
+* There are three types of claims inside the payload:-
+  - Registered claims
+ <img width="708" alt="Screenshot 2024-04-28 at 11 11 07 AM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/daa50aa4-a568-4b5e-a035-85cb6b8fc1e9">
+ 
+  - Public claims
+ <img width="425" alt="Screenshot 2024-04-28 at 11 11 14 AM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/9ec7ad89-f13b-457d-89a3-37dbb7e865ba">
+
+  - Private claims
+ <img width="414" alt="Screenshot 2024-04-28 at 11 12 08 AM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/51f83688-1fc3-415d-abc5-96e0e6321f40">
+
+ 
+#### ```Signature```
+* Encode JWT header and payload seperately using Base64 encoding.
+* Concatenate the encoded header and payload strings using "." (ex :  ```xxxxxx.yyyyyy```) This is known as message.
+* Use RSA(Asymmetric cryptography) or HMAC(symmetric cryptography) to create digital signature.
+* Encode the signature generated in previous step.
+* Concatenation using "."
+* ```Dummy JWT : eyu32d2kbdiknwuid.23di2u3nfuiwndo2i3fu2uhefo2ijwcoiq.imqcnkqwecoq9jcoui2n19o32bd```
+                      base64(header) .          base64(payload)          .       base64(signature)
+### ```Challanges```
+* ```Token Invalidation``` : Lets sat, I have blacklisted one user, how to invalidate its token before expiration ?
+  - a) server need to keep the list of blacklisted tokens and then DB/cache lookup is required while validating.
+  - b) Or, change the secret key, but this will make the JWT invalidate for all users
+  - c) Or, token should be very short lived.
+  - d) Or, token should be used only once.
+* JWT token is encoded, not encrypted, so its less secure. use JWE, means encrypt the payload part.
+* Unsecured JWT with "alg" : none, such JWT should be rejected.
+* ```jwk exploit``` : public key shared in this, should not be used to verify the signature.
+  - e stands for "exponent" and n stands for "modulus" and combined together they form public key.
+    ```json
+    {
+      "typ": "JWT",
+      "alg": "RSA",
+      "jwk" : {
+          "n" : "jhbeqo8wcho8q192d1i2hdu19",
+          "e" : "ABC4ED",
+          "kid" : "cbuqwih83742h3oj1ndijhoid"
+      }
+    }
+    ```
+* Use ```"kid"``` in the header to lookup up the https://{Auth server domain/.well-known/jwks.json} to find the public key
 
 
 
