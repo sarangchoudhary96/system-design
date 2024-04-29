@@ -35,6 +35,16 @@ S<img width="1149" alt="Screenshot 2024-04-29 at 11 48 59 PM" src="https://git
 * CQRS stands for : Command(Create, Update, Delete), Query(Select), Request, Segregation.
 * to overcome joins challanges, what we can do, All services will create, update and delete into their respective DBs and there will be a common DB of all data from which all service will read the data so here we perform joins. The common DB also needs to be updated to we can place a event listener or create a procedure which will trigger where there is any changes on service's DBs so it will update commond DB basically syncing.
 
+> # Idempotency
+* Helps us to take care of duplicate requests. It enables clients to safely retry an operation without worrying about the side-effect of operation can cause.
+* By Default GET, PUT, DELETE are idempotent in nature, POST not an Idempotent.
+* We have to make it idempotent.
+* There can be scenarios where an issue can occur:
+  - If a request comes and server start processing but during processing request gets time out, but start still processing and complete its process. so if request will come again this should not be any changes now at server end as changes are already happened earlier.
+  - If let say two parallel request comes and any one requesy update if other request tries to update then update should not happen as it has already been changes by request one.
+ 
+
+How to handle these two scenarios ? 
 
 
 > # Distributed message queue
