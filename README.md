@@ -201,7 +201,7 @@ S<img width="1149" alt="Screenshot 2024-04-29 at 11 48 59 PM" src="https://git
 
 
 #### RabbitMQ
-https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699d6f08
+* [Rabbit MQ](https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699d6f08)
 
 
 > # Proxy
