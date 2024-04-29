@@ -1,4 +1,5 @@
 Table of Contents
+- [Microservices design patterns](#microservices-design-patterns)
 - [Distributed message queue (like : KAFKA, RMQ)](#distributed-message-queue)
   + [KAFKA](#kafka)
   + [RabbitMQ](#rabbitmq)
@@ -15,6 +16,25 @@ Table of Contents
   + [Write back or behind cache](#5-write-back-or-behind-cache)
 - [JSON web token](#json-web-token)
 - [OAuth](#oauth)
+
+
+### Microservices design patterns
+#### ```Strangler Design Pattern```
+* As we know that using decompostion and DDD pattern we can divide our monolithic service to micrtservices. so, to do this we can use strangler pattern to convert monolithic to microservices pattern we can take a controller in some place and this controller will divide the traffic to microservices and monolithic service. Gradually we will move the traffic from monolithic to microservices like 10%, 20%, 30%... so on.
+
+#### ```SAGA design pattern```
+* When we divide the monolithic to microservice then, we divide the database also, so there are to ways to divide the database either take a single DB for all services or take a seperate DB per service. But, there are some disadvantages of using a single DB that may be out of all service only one service data is very huge as comapared to other and if we want to delete a column in any table then it can be difficult as we need to care of other services, but it has some advantages, that it maintains ACID properties and also query join is easy, but its advantages are difficult for other approach like DB per service.
+* So to solve these to cases in DB per service approach we use SAGA for ACID and CQRS for joins.
+S<img width="1149" alt="Screenshot 2024-04-29 at 11 48 59 PM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/5652141e-668b-40cc-9d84-e92710690735">
+* SAGA pattern is of two types:
+  - ```Choreography``` : let say there are three services s1, s2, and s3. and there are two queues success anf fail queues. s1 updates the data and push into the success queue and then s2 listens to success queue and updates the data and so on. And if let say s2 get fails so s2 will pusblish only fail event in fail queue and s1 will roll back.
+  - ```Orchestrator``` : here we have a orchestrator which is responsible for updating all the services. so, s1 will call orch. for success or failure if success then it will call s2 and s2 again will call orch. with success or failure, if let day calls with failure then orch will call s1 and with failed event and s1 will rolles back.
+
+
+#### ```CQRS Pattern```
+* CQRS stands for : Command(Create, Update, Delete), Query(Select), Request, Segregation.
+* to overcome joins challanges, what we can do, All services will create, update and delete into their respective DBs and there will be a common DB of all data from which all service will read the data so here we perform joins. The common DB also needs to be updated to we can place a event listener or create a procedure which will trigger where there is any changes on service's DBs so it will update commond DB basically syncing.
+
 
 
 ### Distributed message queue
@@ -39,7 +59,7 @@ Table of Contents
 ### How messaging queue works ? 
 #### KAFKA
 * In Kafka we have below components
-  - Producer
+  ```- Producer
   - Consumer
   - Consumer group
   - Topic
@@ -47,7 +67,7 @@ Table of Contents
   - offset
   - Broker (Kafka server like mysql server)
   - Cluster
-  - Zookeeper
+  - Zookeeper```
  
 <img width="983" alt="Screenshot 2024-04-27 at 1 11 10 PM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/73ea80f4-223a-4b18-87d2-6f92de555efd">
 
