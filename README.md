@@ -18,7 +18,7 @@
 - [OAuth](#oauth)
 
 
-# Microservices design patterns
+> # Microservices design patterns
 #### ```Strangler Design Pattern```
 * As we know that using decompostion and DDD pattern we can divide our monolithic service to micrtservices. so, to do this we can use strangler pattern to convert monolithic to microservices pattern we can take a controller in some place and this controller will divide the traffic to microservices and monolithic service. Gradually we will move the traffic from monolithic to microservices like 10%, 20%, 30%... so on.
 
@@ -37,7 +37,7 @@ S<img width="1149" alt="Screenshot 2024-04-29 at 11 48 59 PM" src="https://git
 
 
 
-# Distributed message queue
+> # Distributed message queue
 
 #### What is message queue & why it is needed ? 
 
@@ -204,7 +204,7 @@ S<img width="1149" alt="Screenshot 2024-04-29 at 11 48 59 PM" src="https://git
 https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699d6f08
 
 
-# Proxy
+> # Proxy
 ### What is Proxy server ? 
 * Let us understand it with an example, let say their is a child and there is a chocolate shop and child wants a chocolate so child will ask his mon for the chocolate and his mom on behalf of him will go to chocolate shop will get it and given will chocolate to the child so mon here is proxy.
 * So in real case let say we have client1 and client2 and a server so we can place a proxy server in between clients and a server that will connect to a server on behalf of clients.
@@ -247,7 +247,7 @@ https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699
 * Proxy can act as a firewall also, but the way they work is know as traditional firewall is known as packet
 
 
-# Caching
+> # Caching
 
 * Caching is a technique to store frequently used data in a fast memory rather than accessing data every time from slow access memory.
 * This makes our system very fast.
@@ -336,7 +336,7 @@ https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699
 * If data is removed from the cache and DB write still not happen happens, then there is a chance of an issue. (it is handled by keeping the TAT of cache little higher like 2 days).
 
 
-# JSON web token
+> # JSON web token
 * It provides a secure way of transmitting information between parties as a JSON object.
 * This information can verified its digitally signed using RSA(Public/Private key pair) etc.
 
@@ -416,7 +416,7 @@ https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699
 * Use ```"kid"``` in the header to lookup up the https://{Auth server domain/.well-known/jwks.json} to find the public key
 
 
-# OAuth
+> # OAuth
 * Open authorization (Oauth) a authorization framework.
 * Enables secure third-party access to user protected data.
 * We've seen that a user go to any website and there is a option of signin with google, so here we grant an access to the website that you can go get my info which are already present in gmail.
