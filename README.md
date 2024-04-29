@@ -14,6 +14,7 @@ Table of Contents
   + [Write through cache](#4-write-through-cache)
   + [Write back or behind cache](#5-write-back-or-behind-cache)
 - [JSON web token](#json-web-token)
+- [OAuth](#oauth)
 
 
 ### Distributed message queue
@@ -394,6 +395,26 @@ https://medium.com/cwan-engineering/rabbitmq-concepts-and-best-practices-aa3c699
     ```
 * Use ```"kid"``` in the header to lookup up the https://{Auth server domain/.well-known/jwks.json} to find the public key
 
+
+### OAuth
+* Open authorization (Oauth) a authorization framework.
+* Enables secure third-party access to user protected data.
+* We've seen that a user go to any website and there is a option of signin with google, so here we grant an access to the website that you can go get my info which are already present in gmail.
+* Four important roles or actors involve in it:
+  - Resource owner (a user)
+  - client (a website where a user trying to log in)
+  - Authrization server (gmail authorization server which take care of authorization)
+  - Resource Hosting server (like gmail server from where gmail give data like name etc.)
+
+* Authorization grant types(Mechanism used by client to obtain access token):
+  - Authorization code grant
+  - Implicit grant
+  - Resource owner password credentials grant
+  - Client credential grant
+  - Refresh token grant
+
+#### Lets understand the end to end flow using authorization code grant ?
+<img width="641" alt="Screenshot 2024-04-28 at 11 52 40 PM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/362ec705-2196-47e1-9df1-254a337a5429">
 
 
 
