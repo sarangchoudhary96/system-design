@@ -447,7 +447,18 @@ How to handle these two scenarios ?
 <img width="641" alt="Screenshot 2024-04-28 at 11 52 40 PM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/362ec705-2196-47e1-9df1-254a337a5429">
 
 
+> # Design high availability architecture
+* It can be asked in many other forms like:
+* Design Data Resiliency Architecture.
+* Design to avoid SINGLE POINT OF FAILURE
+* Active-passive v/s Active-Active architecture
+* etc etc.
 
+### Example
+* Lets take scenario with one node of DB, and it goes down then we can see its not fulfilling our condition.
+* Now lets take an example of multinode :
+  - Active - Active
+  - Active - passive
 
 
 
