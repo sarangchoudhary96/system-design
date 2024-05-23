@@ -16,6 +16,12 @@
   + [Write back or behind cache](#5-write-back-or-behind-cache)
 - [JSON web token](#json-web-token)
 - [OAuth](#oauth)
+- - [How Grab configured their data layer to handle multi-million database transactions a day](#how-grab-configured-their-data-layer-to-handle-multi-million-database-transactions-a-day)
+- [How @twitter keeps its Search systems up and stable at scale](#how-twitter-keeps-its-search-systems-up-and-stable-at-scale)
+- [How Razorpay scaled their notification system](#how-razorpay-scaled-their-notification-system)
+- [How Instagram efficiently serves HashTags ordered by count](#how-instagram-efficiently-serves-hashtags-ordered-by-count)
+- [Designing Notifications Service for Instagram](#designing-notifications-service-for-instagram)
+
 
 
 > # Microservices design patterns
@@ -482,6 +488,19 @@ How to handle these two scenarios ?
 
 <img width="1335" alt="Screenshot 2024-05-23 at 11 00 05 AM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/145c0e08-403c-4a66-9cf9-78c35065dbe0">
 
+> # How Razorpay scaled their notification system
+
+<img width="1387" alt="Screenshot 2024-05-23 at 11 09 12 AM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/bcc1a931-1a8b-4a1e-bdce-1da960c694c7">
+
+> # How Instagram efficiently serves HashTags ordered by count
+* They use postgres for this
+* They use partial indexing for this
+* They have a table with columns ```hashtags and media_count```
+* In media_count they store hastags count for every type of content wheater it is video, image or any post anything.
+* They have done a partial indexing fot this which reduces their search significantly.
+
+># Designing Notifications Service for Instagram
+* https://www.youtube.com/watch?v=kIP8L-CSl2Y&list=PLsdq-3Z1EPT27BuTnJ_trF7BsaTpYLqst&index=54&ab_channel=ArpitBhayani
 
 
  
