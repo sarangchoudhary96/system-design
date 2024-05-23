@@ -460,6 +460,31 @@ How to handle these two scenarios ?
   - Active - Active
   - Active - passive
 
+> # How Grab configured their data layer to handle multi-million database transactions a day
+* They use OLTP & OLAP databases seperately. one for transaction(dynamo DB) and other for analytical(MySQL).
+* OLTP:
+  - Holds data for short time
+  - Single source of truth
+  - Heavy anylytical queries won't affect it.
+* OLAP:
+  - data stored for longer duration
+* But How do they update these two can be seen in the fig. below.
+* Their design goal were:
+  - stability
+  - consistency
+  - cost effective
+* They also do an optimisation like user_id_gis when ongoing then delete after completed.
+  
+<img width="1095" alt="Screenshot 2024-05-23 at 10 52 41 AM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/1837e7a2-cfed-4877-9dee-332de11e41c3">
+
+
+> # How @twitter keeps its Search systems up and stable at scale
+
+<img width="1335" alt="Screenshot 2024-05-23 at 11 00 05 AM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/145c0e08-403c-4a66-9cf9-78c35065dbe0">
+
+
+
+ 
 
 
 
