@@ -16,11 +16,12 @@
   + [Write back or behind cache](#5-write-back-or-behind-cache)
 - [JSON web token](#json-web-token)
 - [OAuth](#oauth)
-- - [How Grab configured their data layer to handle multi-million database transactions a day](#how-grab-configured-their-data-layer-to-handle-multi-million-database-transactions-a-day)
+- [How Grab configured their data layer to handle multi-million database transactions a day](#how-grab-configured-their-data-layer-to-handle-multi-million-database-transactions-a-day)
 - [How @twitter keeps its Search systems up and stable at scale](#how-twitter-keeps-its-search-systems-up-and-stable-at-scale)
 - [How Razorpay scaled their notification system](#how-razorpay-scaled-their-notification-system)
 - [How Instagram efficiently serves HashTags ordered by count](#how-instagram-efficiently-serves-hashtags-ordered-by-count)
 - [Designing Notifications Service for Instagram](#designing-notifications-service-for-instagram)
+- [What happens when you type a URL in browser ?](#what-happens-when-you-type-a-url-in-browser)
 
 
 
@@ -499,11 +500,31 @@ How to handle these two scenarios ?
 * In media_count they store hastags count for every type of content wheater it is video, image or any post anything.
 * They have done a partial indexing fot this which reduces their search significantly.
 
-># Designing Notifications Service for Instagram
+> # Designing Notifications Service for Instagram
 * https://www.youtube.com/watch?v=kIP8L-CSl2Y&list=PLsdq-3Z1EPT27BuTnJ_trF7BsaTpYLqst&index=54&ab_channel=ArpitBhayani
 
+> # What happens when you type a URL in browser
 
- 
+<img width="1428" alt="Screenshot 2024-05-24 at 5 36 10 PM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/fd9c4a89-dcb6-47f1-bb42-666ff5d7bd3a">
+
+* We know that DNS are mapped to some IP because we cannot remember IPs.
+* So lets take an example of www.google.com, let say it is mapped to IP 123.32.45.21.
+* So browser will connect to this IP only, but before that browser needs this IP.
+* So there are zones like google zone in which all google mappings and data is present like, maps.google.com or earth.google.com etc.
+* so these zones are hosted in ```authratative name servers``` so when anyone hit any of these server with DNS so they will give IP corressponding to the DNS.
+* But How to reach these servers ?
+* For this there is DNS resolver which does that, DNS resolver can be anyone, your ISP can be a DNS resolver, when you are connected to wifi then your router is a DNS resolver which ypu can check with this command ```ipconfig/all```, this command will give you an IP of DNS resolver and in case of wifi this will give your wifi router IP and if you are connected to any data provider server then their server will be a DNS resolver. Even you can create you own DNS resolver.
+* So how DNS resolver will resolver it?
+* DNS resolver is a server which first taks to ```Root Name Server```.
+* There are in total 13 root name servers are present which is owned by different different companies. these are like 13 hardcoded IPs which has 100s of servers behind and these servers are geographically distributed in the world.
+* when DNS resolver call any of the RNS server, then RNS will return ```Top Level Domain server IPs```.
+* top level domain server are like different set of servers which host ```.com , .in. edu etc```.
+* so let say you are hitting ```www.goog.e.com```, so request will go to .com top level domain server as root name server returned the IP of it.
+* Now top level domain server will return this IP of server which is hosting zones like in our case google zone, so that server will return the IP corresponding to given domain.
+* and then DNS resolver will return this IP to browser and then browser will hit the server with given IP.
+* This all process will occur when maooing is not cached anywhere.
+* This mapping can be cached in browser, DNS resolver, OS there are multiple places.
+* google has 8.8.8.8 and clousflare has 1.1.1.1 server. These are DNS resolver servers if we change the IP to any of these which we get on this command ```ipconfig/all```, then updated IP server will be a DNS resolver.
 
 
 
