@@ -22,6 +22,7 @@
 - [How Instagram efficiently serves HashTags ordered by count](#how-instagram-efficiently-serves-hashtags-ordered-by-count)
 - [Designing Notifications Service for Instagram](#designing-notifications-service-for-instagram)
 - [What happens when you type a URL in browser ?](#what-happens-when-you-type-a-url-in-browser)
+- [How Gojek masks and keeps users' phone numbers secure at scale](#how-gojek-masks-and-keeps-users-phone-numbers-secure-at-scale)
 
 
 
@@ -527,5 +528,6 @@ How to handle these two scenarios ?
 * google has 8.8.8.8 and clousflare has 1.1.1.1 server. These are DNS resolver servers if we change the IP to any of these which we get on this command ```ipconfig/all```, then updated IP server will be a DNS resolver.
 
 
-
+> # How Gojek masks and keeps users phone numbers secure at scale
+* [Watch here](https://www.youtube.com/watch?v=nEEaSZZ8R4I&list=PLsdq-3Z1EPT0RrDebPvBNlmuXDfT6Qs2T&index=18&ab_channel=ArpitBhayani)
 
