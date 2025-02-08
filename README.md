@@ -89,6 +89,44 @@ How to handle these two scenarios ?
  
 <img width="983" alt="Screenshot 2024-04-27 at 1 11 10 PM" src="https://github.com/sarangchoudhary96/system-design/assets/42025130/73ea80f4-223a-4b18-87d2-6f92de555efd">
 
+```text
+Kafka Cluster
+├── Broker 1
+│   ├── P0 (Leader) ⭕
+│   ├── P1 (Follower)
+│   ├── P2 (Follower)
+│   ├── P3 (Leader) ⭕
+│   ├── P4 (Follower)
+│   ├── P5 (Follower)
+│
+├── Broker 2
+│   ├── P0 (Follower)
+│   ├── P1 (Leader) ⭕
+│   ├── P2 (Follower)
+│   ├── P3 (Follower)
+│   ├── P4 (Leader) ⭕
+│   ├── P5 (Follower)
+│
+├── Broker 3
+│   ├── P0 (Follower)
+│   ├── P1 (Follower)
+│   ├── P2 (Leader) ⭕
+│   ├── P3 (Follower)
+│   ├── P4 (Follower)
+│   ├── P5 (Leader) ⭕
+
+Explanation:
+	* There are three brokers (Broker 1, Broker 2, Broker 3).
+	* Each broker contains all partitions (P0 to P5) as replicas.
+	* The leader partitions for each broker are marked with ⭕.
+	* The leader broker for a partition is the only one responsible for handling writes.
+	* Followers replicate the leader’s data and take over if the leader fails.
+
+This setup ensures fault tolerance and scalability in Kafka.
+```
+
+
+
 * Data is stored inside partitions and in a consumer group a consumer can consume data from one partion per topic so if there are two topics and both topics have 2 partitions then a consumer can consumer from 2 partitions one partition from every topic.
 * Let say we have 4 kafka brokers and running on different machines i.e Node1, Node2, Node3, Node 4 then, a group of kafka brokers is known as cluster, and this cluster is managed by zookeeper. All brokers communicate with each other using zookeeper.
 
